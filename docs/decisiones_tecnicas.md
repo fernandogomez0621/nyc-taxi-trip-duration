@@ -1,5 +1,6 @@
 # Nota de decisiones técnicas y supuestos
 
+
 Documento de respaldo de la prueba técnica. Recoge las decisiones de diseño, los
 supuestos asumidos y la evidencia que los sustenta.
 
