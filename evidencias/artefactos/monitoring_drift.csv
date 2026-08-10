@@ -1,0 +1,11 @@
+evaluado_en,lote,variable,psi,estado,n_referencia,n_lote
+2026-08-10T04:10:52.263Z,particion de evaluacion,objetivo_duracion,0.0031134320874331048,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,pickup_hour,0.0022,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,dropoff_cluster,0.002,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,pickup_cluster,0.0016,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,distancia_manhattan_km,0.0016,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,distancia_haversine_km,0.0014,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,bearing_deg,0.0008,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,pickup_dayofweek,0.0003,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,passenger_count,0.0003,estable,30000,30000
+2026-08-10T04:10:52.263Z,particion de evaluacion,es_aeropuerto,0,estable,30000,30000

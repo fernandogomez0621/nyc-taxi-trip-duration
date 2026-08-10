@@ -1,0 +1,69 @@
+{
+  "generado_en": "2026-08-09T23:30:24",
+  "tabla_origen": "workspace.gold.trips_analytics",
+  "n_viajes": 1455526,
+  "target": {
+    "mediana_seg": 661.0,
+    "media_seg": 836.429895446732,
+    "asimetria": 2.5803624047472358,
+    "asimetria_log": -0.6296077452200276
+  },
+  "r2_distancia_sola": 0.592646,
+  "ajuste_distancia": {
+    "intercepto": 5.2656,
+    "pendiente": 0.952755,
+    "r2": 0.592646
+  },
+  "efectos": [
+    {
+      "factor": "pickup_hour",
+      "eta2_marginal": 0.010896,
+      "eta2_parcial": 0.084412
+    },
+    {
+      "factor": "dropoff_cluster",
+      "eta2_marginal": 0.09635,
+      "eta2_parcial": 0.059816
+    },
+    {
+      "factor": "pickup_cluster",
+      "eta2_marginal": 0.094469,
+      "eta2_parcial": 0.028892
+    },
+    {
+      "factor": "pickup_dayofweek",
+      "eta2_marginal": 0.00472,
+      "eta2_parcial": 0.020985
+    },
+    {
+      "factor": "es_aeropuerto",
+      "eta2_marginal": 0.125586,
+      "eta2_parcial": 0.01179
+    },
+    {
+      "factor": "pickup_month",
+      "eta2_marginal": 0.002373,
+      "eta2_parcial": 0.002704
+    },
+    {
+      "factor": "passenger_count",
+      "eta2_marginal": 0.001192,
+      "eta2_parcial": 0.000648
+    },
+    {
+      "factor": "vendor_id",
+      "eta2_marginal": 0.000143,
+      "eta2_parcial": 9.4e-05
+    }
+  ],
+  "orden_esperado_importancia": [
+    "pickup_hour",
+    "dropoff_cluster",
+    "pickup_cluster",
+    "pickup_dayofweek",
+    "es_aeropuerto",
+    "pickup_month",
+    "passenger_count",
+    "vendor_id"
+  ]
+}

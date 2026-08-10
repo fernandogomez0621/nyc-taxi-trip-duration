@@ -1,0 +1,10 @@
+v_duracion,v_pasajeros,v_coords_pickup,v_coords_dropoff,v_completitud,count
+false,true,true,true,true,2056
+true,true,true,false,true,739
+true,true,false,false,true,242
+true,false,true,true,true,63
+true,true,false,true,true,12
+false,true,true,false,true,3
+true,false,false,false,true,1
+false,true,false,true,true,1
+false,false,true,true,true,1

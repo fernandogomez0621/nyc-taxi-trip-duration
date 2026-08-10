@@ -1,0 +1,23 @@
+# Datos de origen: viven en el Volume de Unity Catalog, nunca en el repo
+*.csv
+*.zip
+*.parquet
+data/
+
+# Excepcion: los artefactos de evidencia si se versionan, son resultados
+# pequenos que documentan la ejecucion y no datos de entrada.
+!evidencias/artefactos/*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+*.egg-info/
+.venv/
+
+# MLflow local
+mlruns/
+
+# Sistema
+.DS_Store

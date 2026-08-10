@@ -1,0 +1,136 @@
+{
+  "modelo": "HistGradientBoostingRegressor",
+  "justificacion_nodo_unico": "El conjunto de entrenamiento ocupa 82 MB en memoria. A ese volumen el entrenamiento distribuido paga coordinacion sin beneficio, y la cache de modelos de Spark Connect en computo serverless esta limitada a 1 GB.",
+  "hiperparametros": {
+    "max_depth": null,
+    "max_iter": 300,
+    "learning_rate": 0.1
+  },
+  "seleccion_hiperparametros": "validacion temporal hacia adelante, 3 ventanas",
+  "target": "log1p(trip_duration), invertido con expm1 antes de medir",
+  "recorte_prediccion": [
+    1,
+    21600
+  ],
+  "n_train": 1349135,
+  "n_test": 106391,
+  "metricas_test": {
+    "rmse_min": 5.747725,
+    "mae_min": 3.272444,
+    "r2": 0.772332,
+    "rmsle": 0.374484
+  },
+  "metricas_train": {
+    "rmse_min": 5.200891,
+    "mae_min": 3.026795,
+    "r2": 0.773981,
+    "rmsle": 0.353203
+  },
+  "lectura_negocio": {
+    "error_medio_min": 3.27,
+    "viaje_mediano_min": 11.32,
+    "error_relativo_pct": 28.9,
+    "ventana_sugerida_min": [
+      8.0,
+      14.6
+    ]
+  },
+  "comparacion": [
+    {
+      "modelo": "Baseline calendario",
+      "rmse_min": 12.43771,
+      "mae_min": 7.812247,
+      "r2": -0.066084,
+      "rmsle": 0.783304
+    },
+    {
+      "modelo": "Baseline distancia x hora",
+      "rmse_min": 7.142523,
+      "mae_min": 4.385211,
+      "r2": 0.648428,
+      "rmsle": 0.495457
+    },
+    {
+      "modelo": "Regresion lineal (recortada)",
+      "rmse_min": 13.026345,
+      "mae_min": 5.394824,
+      "r2": -0.16938,
+      "rmsle": 0.533984
+    },
+    {
+      "modelo": "GBT por defecto",
+      "rmse_min": 5.889002,
+      "mae_min": 3.339342,
+      "r2": 0.761002,
+      "rmsle": 0.378426
+    },
+    {
+      "modelo": "GBT ajustado",
+      "rmse_min": 5.747725,
+      "mae_min": 3.272444,
+      "r2": 0.772332,
+      "rmsle": 0.374484
+    }
+  ],
+  "importancias": {
+    "distancia_haversine_km": 1.459691,
+    "pickup_hour": 0.14648,
+    "bearing_deg": 0.07036,
+    "dropoff_cluster": 0.044478,
+    "pickup_dayofweek": 0.033061,
+    "pickup_cluster": 0.022104,
+    "vendor_id": 0.019725,
+    "distancia_manhattan_km": 0.003934,
+    "passenger_count": 0.003646,
+    "es_aeropuerto": 0.002388,
+    "is_weekend": 0.000851,
+    "pickup_month": 0.0,
+    "store_and_fwd_flag": -0.0001
+  },
+  "busqueda_hiperparametros": [
+    {
+      "max_depth": 6,
+      "max_iter": 100,
+      "learning_rate": 0.1,
+      "rmsle_promedio": 0.3726655363616647,
+      "rmsle_por_ventana": [
+        0.3652,
+        0.3679,
+        0.3849
+      ]
+    },
+    {
+      "max_depth": 8,
+      "max_iter": 200,
+      "learning_rate": 0.1,
+      "rmsle_promedio": 0.3692455551491982,
+      "rmsle_por_ventana": [
+        0.3631,
+        0.3637,
+        0.3809
+      ]
+    },
+    {
+      "max_depth": 10,
+      "max_iter": 300,
+      "learning_rate": 0.05,
+      "rmsle_promedio": 0.36985996250328484,
+      "rmsle_por_ventana": [
+        0.3632,
+        0.3647,
+        0.3817
+      ]
+    },
+    {
+      "max_depth": null,
+      "max_iter": 300,
+      "learning_rate": 0.1,
+      "rmsle_promedio": 0.36816042683982036,
+      "rmsle_por_ventana": [
+        0.3625,
+        0.3627,
+        0.3793
+      ]
+    }
+  ]
+}

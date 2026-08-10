@@ -1,0 +1,127 @@
+# ---------------------------------------------------------------------------
+# Job de orquestacion del pipeline de datos
+#
+# Reto bonus: convertir las transformaciones en un job parametrizado que simule
+# como se orquestaria en produccion.
+#
+# El grafo de tareas replica las dependencias reales entre capas. No es un
+# encadenamiento lineal: la ingesta del conjunto de entrenamiento y la del lote
+# de scoring son independientes entre si y pueden ejecutarse en paralelo, de
+# modo que declararlas como tales reduce el tiempo total.
+#
+# Formato: Databricks Asset Bundle. Puede desplegarse con `databricks bundle
+# deploy` o replicarse manualmente desde la interfaz de Jobs.
+# ---------------------------------------------------------------------------
+
+resources:
+  jobs:
+    nyc_taxi_pipeline:
+      name: nyc-taxi-pipeline
+
+      # -------------------------------------------------------------------
+      # Parametros
+      #
+      # `p_fecha_proceso` no se usa en esta implementacion porque el dataset
+      # corresponde a una carga historica completa. Se declara porque es el
+      # parametro que gobernaria una ejecucion incremental: al recibir lotes
+      # semanales, cada corrida procesaria solo la particion de su fecha.
+      # Dejarlo declarado documenta como escalaria el diseno sin exigir
+      # reescribir la orquestacion.
+      # -------------------------------------------------------------------
+      parameters:
+        - name: p_fecha_proceso
+          default: "{{job.start_time.iso_date}}"
+        - name: p_catalogo
+          default: nyc_taxi
+
+      tags:
+        proyecto: nyc-taxi-trip-duration
+        capa: pipeline
+
+      # -------------------------------------------------------------------
+      # Tareas
+      # -------------------------------------------------------------------
+      tasks:
+        # Las pruebas unitarias corren primero y detienen el pipeline si algun
+        # cambio rompio la logica pura. Cuestan menos de un segundo y evitan
+        # gastar computo procesando datos con codigo defectuoso.
+        - task_key: tests
+          notebook_task:
+            notebook_path: ../notebooks/00_tests
+
+        # Ingesta del conjunto de entrenamiento.
+        - task_key: bronze_train
+          depends_on:
+            - task_key: tests
+          notebook_task:
+            notebook_path: ../notebooks/pipeline/01_bronze
+            base_parameters:
+              p_origen: train
+
+        # Ingesta del lote de scoring. Independiente de la anterior: el mismo
+        # notebook con otro parametro, ejecutable en paralelo.
+        - task_key: bronze_scoring
+          depends_on:
+            - task_key: tests
+          notebook_task:
+            notebook_path: ../notebooks/pipeline/01_bronze
+            base_parameters:
+              p_origen: scoring
+
+        - task_key: silver
+          depends_on:
+            - task_key: bronze_train
+          notebook_task:
+            notebook_path: ../notebooks/pipeline/02_silver
+
+        - task_key: gold
+          depends_on:
+            - task_key: silver
+          notebook_task:
+            notebook_path: ../notebooks/pipeline/03_gold
+
+        # El monitoreo cierra el flujo: cada lote procesado se evalua contra la
+        # referencia al momento de llegar. Depende tambien de la ingesta de
+        # scoring, que es el lote a vigilar.
+        - task_key: monitoreo_drift
+          depends_on:
+            - task_key: gold
+            - task_key: bronze_scoring
+          notebook_task:
+            notebook_path: ../notebooks/analytics/06_monitoreo
+
+      # -------------------------------------------------------------------
+      # Programacion
+      #
+      # Semanal, los lunes a las 5:00, alineado con la cadencia de lotes que
+      # plantea el enunciado. Se ejecuta de madrugada porque el consumo del
+      # tablero es diurno.
+      # -------------------------------------------------------------------
+      schedule:
+        quartz_cron_expression: "0 0 5 ? * MON"
+        timezone_id: America/Bogota
+        pause_status: PAUSED
+
+      # -------------------------------------------------------------------
+      # Notificaciones
+      #
+      # Solo fallo y duracion excesiva. No se notifica el exito: una alerta que
+      # llega cada semana sin excepcion deja de leerse, y con ella se pierde la
+      # que si importaba.
+      # -------------------------------------------------------------------
+      email_notifications:
+        on_failure:
+          - andres.gomez@ejemplo.com
+        no_alert_for_skipped_runs: true
+
+      health:
+        rules:
+          - metric: RUN_DURATION_SECONDS
+            op: GREATER_THAN
+            value: 3600
+
+      # Sin reintentos automaticos en las tareas de transformacion: son
+      # idempotentes por diseno —cada capa reescribe su tabla completa— pero un
+      # fallo suele indicar un problema en el dato de origen, y reintentar sin
+      # revisarlo solo retrasa el diagnostico.
+      max_concurrent_runs: 1
